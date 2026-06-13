@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haunted Dorm - Полная стратегия выживания</title>
+    <title>Haunted Dorm - Стратегия выживания</title>
     <style>
         * {
             user-select: none;
@@ -29,7 +29,6 @@
             border: 1px solid #8b0000;
         }
 
-        /* Панель ресурсов */
         .resources-panel {
             display: flex;
             gap: 20px;
@@ -49,17 +48,14 @@
             font-weight: bold;
             font-size: 18px;
             border-left: 4px solid #ff6600;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .resource span {
             color: #ffaa44;
             font-size: 26px;
             font-weight: bold;
-            text-shadow: 0 0 5px #ff6600;
         }
 
-        /* Игровое поле 6x6 */
         .game-board {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -84,7 +80,6 @@
             transition: all 0.2s;
             border: 2px solid #5a4a2a;
             position: relative;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
 
         .tile:hover {
@@ -100,7 +95,6 @@
 
         .building-icon {
             font-size: 32px;
-            filter: drop-shadow(0 0 5px rgba(255,255,0,0.5));
         }
 
         .building-hp {
@@ -138,7 +132,6 @@
             background: #44aa44;
         }
 
-        /* Панель строительства */
         .build-panel {
             background: #0a0a0a;
             padding: 15px;
@@ -180,7 +173,6 @@
 
         .build-buttons button:hover {
             background: linear-gradient(135deg, #7a4a2a, #4a2a1a);
-            transform: scale(1.02);
         }
 
         .close-panel {
@@ -190,7 +182,6 @@
             padding: 5px 20px;
         }
 
-        /* Лог боя */
         .combat-log {
             background: #050505;
             height: 100px;
@@ -209,7 +200,6 @@
             border-bottom: 1px solid #221100;
         }
 
-        /* Таймер */
         .timer-bar {
             text-align: center;
             font-size: 20px;
@@ -227,7 +217,6 @@
             color: #ffaa00;
         }
 
-        /* Экраны победы/поражения */
         .overlay {
             position: fixed;
             top: 0;
@@ -247,7 +236,6 @@
             border-radius: 30px;
             text-align: center;
             border: 2px solid #ff6600;
-            box-shadow: 0 0 50px rgba(255,0,0,0.5);
         }
 
         .overlay-content h2 {
@@ -264,16 +252,6 @@
 
         .hidden {
             display: none;
-        }
-
-        /* Анимация атаки */
-        @keyframes attackFlash {
-            0% { text-shadow: 0 0 0 red; }
-            100% { text-shadow: 0 0 20px red; }
-        }
-
-        .attack-animation {
-            animation: attackFlash 0.2s;
         }
     </style>
 </head>
@@ -292,43 +270,41 @@
     <div class="build-panel" id="buildPanel">
         <h3>🏗️ ВЫБЕРИ ПОСТРОЙКУ</h3>
         <div class="build-buttons">
-            <button onclick="selectBuilding('bed')">🛌 Кровать (80💤)</button>
-            <button onclick="selectBuilding('turret')">🔫 Турель (120💤)</button>
-            <button onclick="selectBuilding('trap')">⚡ Ловушка (60💤)</button>
-            <button onclick="selectBuilding('amplifier')">📡 Усилитель (150💤)</button>
-            <button onclick="selectBuilding('door')">🚪 Укрепдверь (100💤)</button>
+            <button onclick="selectBuilding('bed')">🛌 Кровать (80)</button>
+            <button onclick="selectBuilding('turret')">🔫 Турель (120)</button>
+            <button onclick="selectBuilding('trap')">⚡ Ловушка (60)</button>
+            <button onclick="selectBuilding('amplifier')">📡 Усилитель (150)</button>
+            <button onclick="selectBuilding('door')">🚪 Дверь (100)</button>
         </div>
         <button class="close-panel" onclick="closeBuildPanel()">❌ ЗАКРЫТЬ</button>
     </div>
 
     <div class="combat-log" id="combatLog">
-        <div>🎮 ИГРА НАЧАЛАСЬ! Постройте оборону...</div>
+        <div>🎮 ИГРА НАЧАЛАСЬ! Стройте оборону...</div>
     </div>
 
     <div class="timer-bar">
-        ⏳ ДО ПОЯВЛЕНИЯ ПРИЗРАКОВ: <span id="timeLeft">30</span> сек
+        ⏳ ДО АТАКИ: <span id="timeLeft">30</span> сек
     </div>
 </div>
 
 <div id="winScreen" class="overlay hidden">
     <div class="overlay-content">
-        <h2>🏆 ПОБЕДА! 🏆</h2>
-        <p>Вы выжили и очистили общежитие от призраков!</p>
-        <p>Волн пройдено: 10</p>
-        <button onclick="location.reload()">🔁 ИГРАТЬ СНОВА</button>
+        <h2>🏆 ПОБЕДА!</h2>
+        <p>Вы очистили общежитие от призраков!</p>
+        <button onclick="location.reload()">ИГРАТЬ СНОВА</button>
     </div>
 </div>
 
 <div id="loseScreen" class="overlay hidden">
     <div class="overlay-content">
-        <h2>💀 ВЫ УМЕРЛИ 💀</h2>
+        <h2>💀 ВЫ УМЕРЛИ</h2>
         <p>Призраки забрали ваши сны...</p>
-        <button onclick="location.reload()">🔄 ПОПРОБОВАТЬ СНОВА</button>
+        <button onclick="location.reload()">ПОПРОБОВАТЬ СНОВА</button>
     </div>
 </div>
 
 <script>
-    // ==================== ИГРОВЫЕ ПЕРЕМЕННЫЕ ====================
     let dreams = 250;
     let currentWave = 1;
     let gameActive = true;
@@ -337,22 +313,18 @@
     let ghosts = [];
     let buildings = [];
     let selectedTile = null;
-    let selectedBuildingType = null;
     let totalKilled = 0;
     
     const BOARD_SIZE = 6;
     let board = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(null));
     
-    // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
-    function addLog(message) {
+    function addLog(msg) {
         const logDiv = document.getElementById('combatLog');
         const entry = document.createElement('div');
         const time = new Date().toLocaleTimeString();
-        entry.innerHTML = `🕯️ [${time}] ${message}`;
+        entry.innerHTML = `🕯️ [${time}] ${msg}`;
         logDiv.insertBefore(entry, logDiv.firstChild);
-        if (logDiv.children.length > 25) {
-            logDiv.removeChild(logDiv.lastChild);
-        }
+        if (logDiv.children.length > 25) logDiv.removeChild(logDiv.lastChild);
     }
     
     function updateUI() {
@@ -360,20 +332,14 @@
         document.getElementById('wave').innerText = `${currentWave}/10`;
         document.getElementById('ghostCount').innerText = ghosts.length;
         document.getElementById('killed').innerText = totalKilled;
-        
-        let totalDmg = 0;
-        buildings.forEach(b => {
-            if (b.type === 'turret') totalDmg += b.damage;
-        });
+        let totalDmg = buildings.filter(b => b.type === 'turret').reduce((s,b) => s + b.damage, 0);
         document.getElementById('totalDamage').innerText = totalDmg;
     }
     
-    // ==================== ГЕНЕРАЦИЯ ПРИЗРАКОВ ====================
     function spawnGhosts() {
-        const ghostCount = Math.min(3 + Math.floor(currentWave / 1.2), 10);
+        const count = Math.min(3 + Math.floor(currentWave / 1.2), 10);
         ghosts = [];
-        
-        for (let i = 0; i < ghostCount; i++) {
+        for (let i = 0; i < count; i++) {
             ghosts.push({
                 id: Math.random(),
                 hp: 30 + currentWave * 10,
@@ -381,149 +347,92 @@
                 damage: 5 + Math.floor(currentWave / 1.5),
                 x: 20 + Math.random() * 60,
                 y: 20 + Math.random() * 60,
-                attackCooldown: 0,
-                type: currentWave > 5 ? 'elite' : 'normal'
+                attackCd: 0
             });
         }
-        
-        addLog(`🌊 ВОЛНА ${currentWave}! Появилось ${ghostCount} призраков! ${currentWave > 5 ? 'Появились элитные призраки!' : ''}`);
+        addLog(`🌊 ВОЛНА ${currentWave}! ${count} призраков!`);
         waveInProgress = true;
         updateUI();
     }
     
-    // ==================== БОЕВАЯ СИСТЕМА ====================
     function processCombat() {
         if (!waveInProgress || !gameActive) return;
         
-        // Атака призраков на здания
         for (let i = 0; i < ghosts.length; i++) {
-            const ghost = ghosts[i];
-            if (ghost.attackCooldown > 0) {
-                ghost.attackCooldown--;
-                continue;
+            const g = ghosts[i];
+            if (g.attackCd > 0) { g.attackCd--; continue; }
+            
+            let closest = null;
+            let closestDist = Infinity;
+            for (let b of buildings) {
+                const dist = Math.abs(b.x - g.x) + Math.abs(b.y - g.y);
+                if (dist < closestDist) { closestDist = dist; closest = b; }
             }
             
-            // Поиск ближайшего здания
-            let closestBuilding = null;
-            let closestDistance = Infinity;
-            
-            for (let building of buildings) {
-                const dist = Math.abs(building.x - ghost.x) + Math.abs(building.y - ghost.y);
-                if (dist < closestDistance) {
-                    closestDistance = dist;
-                    closestBuilding = building;
-                }
-            }
-            
-            if (closestBuilding && closestDistance < 2.5) {
-                const actualDamage = ghost.damage;
-                closestBuilding.hp -= actualDamage;
-                ghost.attackCooldown = 20;
-                addLog(`👻 Призрак атаковал ${getBuildingName(closestBuilding.type)}! -${actualDamage}❤️`);
-                
-                if (closestBuilding.hp <= 0) {
-                    const index = buildings.indexOf(closestBuilding);
-                    if (index > -1) {
-                        buildings.splice(index, 1);
-                        board[closestBuilding.y][closestBuilding.x] = null;
-                        addLog(`💔 ${getBuildingName(closestBuilding.type)} РАЗРУШЕН!`);
-                    }
+            if (closest && closestDist < 2.5) {
+                closest.hp -= g.damage;
+                g.attackCd = 20;
+                addLog(`👻 Призрак атаковал! -${g.damage}`);
+                if (closest.hp <= 0) {
+                    const idx = buildings.indexOf(closest);
+                    if (idx > -1) { buildings.splice(idx,1); board[closest.y][closest.x] = null; }
+                    addLog(`💔 Здание разрушено!`);
                 }
             }
         }
         
-        // Удаление мертвых призраков
-        const beforeCount = ghosts.length;
+        const before = ghosts.length;
         ghosts = ghosts.filter(g => g.hp > 0);
-        const killedThisTick = beforeCount - ghosts.length;
-        if (killedThisTick > 0) {
-            totalKilled += killedThisTick;
-            updateUI();
-        }
+        if (before - ghosts.length > 0) { totalKilled += before - ghosts.length; updateUI(); }
         
-        // Атака турелей
-        for (let building of buildings) {
-            if (building.type === 'turret' && building.cooldown <= 0 && ghosts.length > 0) {
+        for (let b of buildings) {
+            if (b.type === 'turret' && b.cd <= 0 && ghosts.length) {
                 const target = ghosts[0];
-                let damage = building.damage;
-                
-                // Поиск усилителей рядом
-                for (let amp of buildings) {
-                    if (amp.type === 'amplifier' && Math.abs(amp.x - building.x) + Math.abs(amp.y - building.y) <= 2) {
-                        damage += 15;
-                    }
+                let dmg = b.damage;
+                for (let a of buildings) {
+                    if (a.type === 'amplifier' && Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= 2) dmg += 15;
                 }
-                
-                target.hp -= damage;
-                building.cooldown = 25;
-                addLog(`🔫 Турель выстрелила! Урон: ${damage}`);
-                
-                if (target.hp <= 0) {
-                    const reward = 25 + currentWave * 4;
-                    dreams += reward;
-                    addLog(`💀 Призрак уничтожен! +${reward} снов`);
-                    updateUI();
-                }
+                target.hp -= dmg;
+                b.cd = 25;
+                addLog(`🔫 Турель: ${dmg} урона`);
+                if (target.hp <= 0) { dreams += 25 + currentWave * 4; addLog(`💀 +${25+currentWave*4} снов`); updateUI(); }
             }
-            
-            // Атака ловушек
-            if (building.type === 'trap' && building.cooldown <= 0 && ghosts.length > 0) {
-                for (let ghost of ghosts) {
-                    if (Math.abs(ghost.x - building.x) + Math.abs(ghost.y - building.y) <= 1.5) {
-                        const trapDamage = 15 + building.level * 5;
-                        ghost.hp -= trapDamage;
-                        building.cooldown = 40;
-                        addLog(`⚡ Ловушка сработала! Урон: ${trapDamage}`);
+            if (b.type === 'trap' && b.cd <= 0 && ghosts.length) {
+                for (let g of ghosts) {
+                    if (Math.abs(g.x - b.x) + Math.abs(g.y - b.y) <= 1.5) {
+                        g.hp -= 15 + b.level * 5;
+                        b.cd = 40;
+                        addLog(`⚡ Ловушка!`);
                         break;
                     }
                 }
             }
-            
-            // Контратака укрепдвери
-            if (building.type === 'door' && building.cooldown <= 0 && ghosts.length > 0) {
-                for (let ghost of ghosts) {
-                    if (Math.abs(ghost.x - building.x) + Math.abs(ghost.y - building.y) <= 1) {
-                        const doorDamage = 8 + building.level * 3;
-                        ghost.hp -= doorDamage;
-                        building.cooldown = 30;
-                        addLog(`🚪 Дверь отбила атаку! Урон: ${doorDamage}`);
+            if (b.type === 'door' && b.cd <= 0 && ghosts.length) {
+                for (let g of ghosts) {
+                    if (Math.abs(g.x - b.x) + Math.abs(g.y - b.y) <= 1) {
+                        g.hp -= 8 + b.level * 3;
+                        b.cd = 30;
+                        addLog(`🚪 Дверь контратакует!`);
                         break;
                     }
                 }
             }
-            
-            if (building.cooldown > 0) building.cooldown--;
+            if (b.cd > 0) b.cd--;
+            if (b.type === 'bed') dreams += 2 + b.level;
         }
         
-        // Пассивный доход от кроватей
-        for (let building of buildings) {
-            if (building.type === 'bed') {
-                dreams += 2 + building.level;
-            }
-        }
-        
-        // Проверка наличия кровати
         const hasBed = buildings.some(b => b.type === 'bed');
-        if (!hasBed && gameActive) {
-            gameActive = false;
-            document.getElementById('loseScreen').classList.remove('hidden');
-            addLog(`💀 У вас нет кровати! Призраки победили!`);
-        }
+        if (!hasBed && gameActive) { gameActive = false; document.getElementById('loseScreen').classList.remove('hidden'); addLog(`💀 Нет кровати - поражение!`); }
         
-        // Проверка победы
         if (currentWave >= 10 && ghosts.length === 0 && waveInProgress) {
-            waveInProgress = false;
-            gameActive = false;
+            waveInProgress = false; gameActive = false;
             document.getElementById('winScreen').classList.remove('hidden');
-            addLog(`🏆 ВЫ ОЧИСТИЛИ ОБЩЕЖИТЬЕ! ПОБЕДА!`);
+            addLog(`🏆 ПОБЕДА!`);
         }
         
-        // Переход на следующую волну
         if (ghosts.length === 0 && waveInProgress && currentWave < 10) {
-            waveInProgress = false;
-            currentWave++;
-            preparationTime = 25;
-            addLog(`✨ ВОЛНА ${currentWave-1} ПРОЙДЕНА! Готовьтесь к следующей...`);
+            waveInProgress = false; currentWave++; preparationTime = 25;
+            addLog(`✨ ВОЛНА ${currentWave-1} ПРОЙДЕНА!`);
             updateUI();
         }
         
@@ -531,192 +440,84 @@
         renderBoard();
     }
     
-    function getBuildingName(type) {
-        const names = {
-            'bed': 'Кровать',
-            'turret': 'Турель',
-            'trap': 'Ловушка',
-            'amplifier': 'Усилитель',
-            'door': 'Дверь'
-        };
-        return names[type] || type;
-    }
-    
-    // ==================== СТРОИТЕЛЬСТВО ====================
     function buildOnTile(x, y, type) {
         if (!gameActive) return false;
-        
-        let cost = 0;
-        let buildingObj = null;
-        
+        let cost = 0, obj = null;
         switch(type) {
-            case 'bed':
-                cost = 80;
-                buildingObj = { type: 'bed', x, y, hp: 60, maxHp: 60, level: 1, cooldown: 0 };
-                break;
-            case 'turret':
-                cost = 120;
-                buildingObj = { type: 'turret', x, y, hp: 50, maxHp: 50, damage: 18, level: 1, cooldown: 0 };
-                break;
-            case 'trap':
-                cost = 60;
-                buildingObj = { type: 'trap', x, y, hp: 40, maxHp: 40, level: 1, cooldown: 0 };
-                break;
-            case 'amplifier':
-                cost = 150;
-                buildingObj = { type: 'amplifier', x, y, hp: 45, maxHp: 45, level: 1, cooldown: 0 };
-                break;
-            case 'door':
-                cost = 100;
-                buildingObj = { type: 'door', x, y, hp: 100, maxHp: 100, level: 1, cooldown: 0 };
-                break;
+            case 'bed': cost = 80; obj = { type: 'bed', x, y, hp: 60, maxHp: 60, level: 1, cd: 0 }; break;
+            case 'turret': cost = 120; obj = { type: 'turret', x, y, hp: 50, maxHp: 50, damage: 18, level: 1, cd: 0 }; break;
+            case 'trap': cost = 60; obj = { type: 'trap', x, y, hp: 40, maxHp: 40, level: 1, cd: 0 }; break;
+            case 'amplifier': cost = 150; obj = { type: 'amplifier', x, y, hp: 45, maxHp: 45, level: 1, cd: 0 }; break;
+            case 'door': cost = 100; obj = { type: 'door', x, y, hp: 100, maxHp: 100, level: 1, cd: 0 }; break;
         }
-        
-        if (dreams >= cost && buildingObj) {
+        if (dreams >= cost && obj) {
             dreams -= cost;
-            buildings.push(buildingObj);
-            board[y][x] = buildingObj;
-            addLog(`✅ ПОСТРОЕНО: ${getBuildingName(type)} на клетке (${x+1},${y+1})`);
-            updateUI();
-            renderBoard();
+            buildings.push(obj);
+            board[y][x] = obj;
+            addLog(`✅ Построен ${type}`);
+            updateUI(); renderBoard();
             return true;
-        } else {
-            addLog(`❌ НЕ ХВАТАЕТ СНОВ для ${getBuildingName(type)}! Нужно: ${cost}`);
-            return false;
-        }
+        } else { addLog(`❌ Не хватает снов! Нужно ${cost}`); return false; }
     }
     
-    // ==================== УЛУЧШЕНИЕ ЗДАНИЙ ====================
     function upgradeBuilding(x, y) {
-        const building = board[y][x];
-        if (!building || !gameActive) return;
-        
-        const cost = 50 + building.level * 30;
+        const b = board[y][x];
+        if (!b || !gameActive) return;
+        const cost = 50 + b.level * 30;
         if (dreams >= cost) {
-            dreams -= cost;
-            building.level++;
-            building.hp += 25;
-            building.maxHp += 25;
-            
-            if (building.type === 'turret') building.damage += 7;
-            if (building.type === 'door') building.maxHp += 30;
-            
-            addLog(`⬆️ ${getBuildingName(building.type)} УЛУЧШЕН до ${building.level} уровня!`);
-            updateUI();
-            renderBoard();
-        } else {
-            addLog(`💰 НЕ ХВАТАЕТ СНОВ для улучшения! Нужно: ${cost}`);
-        }
+            dreams -= cost; b.level++;
+            b.hp += 25; b.maxHp += 25;
+            if (b.type === 'turret') b.damage += 7;
+            addLog(`⬆️ Улучшен до ${b.level} уровня!`);
+            updateUI(); renderBoard();
+        } else { addLog(`💰 Нужно ${cost} снов для улучшения`); }
     }
     
-    // ==================== ОТРИСОВКА ПОЛЯ ====================
     function renderBoard() {
         const boardDiv = document.getElementById('gameBoard');
         boardDiv.innerHTML = '';
-        
         for (let y = 0; y < BOARD_SIZE; y++) {
             for (let x = 0; x < BOARD_SIZE; x++) {
                 const tile = document.createElement('div');
                 tile.className = 'tile';
-                const building = board[y][x];
-                
-                if (building) {
-                    let icon = '';
-                    switch(building.type) {
-                        case 'bed': icon = '🛌'; break;
-                        case 'turret': icon = '🔫'; break;
-                        case 'trap': icon = '⚡'; break;
-                        case 'amplifier': icon = '📡'; break;
-                        case 'door': icon = '🚪'; break;
-                    }
-                    
-                    const hpPercent = (building.hp / building.maxHp) * 100;
-                    const hpColor = hpPercent > 60 ? '#88ff88' : (hpPercent > 30 ? '#ffaa44' : '#ff4444');
-                    
-                    tile.innerHTML = `
-                        <div class="building-icon">${icon}</div>
-                        <div class="building-hp" style="color: ${hpColor}">❤️${Math.max(0, building.hp)}/${building.maxHp}</div>
-                        <div class="building-level">Lv${building.level}</div>
-                        <button class="upgrade-btn" onclick="upgradeBuilding(${x},${y})">⬆️ Улучшить (${50 + building.level * 30})</button>
-                    `;
+                const b = board[y][x];
+                if (b) {
+                    let icon = { bed:'🛌', turret:'🔫', trap:'⚡', amplifier:'📡', door:'🚪' }[b.type];
+                    tile.innerHTML = `<div class="building-icon">${icon}</div><div class="building-hp">❤️${b.hp}/${b.maxHp}</div><div class="building-level">Lv${b.level}</div><button class="upgrade-btn" onclick="upgradeBuilding(${x},${y})">⬆️ ${50+b.level*30}</button>`;
                     tile.classList.add('has-building');
                 } else {
-                    tile.innerHTML = `
-                        <div style="font-size: 28px;">⬜</div>
-                        <div style="font-size: 9px; color: #886644;">пусто</div>
-                    `;
-                    tile.onclick = () => openBuildPanel(x, y);
+                    tile.innerHTML = `<div style="font-size:28px;">⬜</div><div style="font-size:9px;">пусто</div>`;
+                    tile.onclick = () => { selectedTile = {x,y}; document.getElementById('buildPanel').classList.add('active'); };
                 }
-                
                 boardDiv.appendChild(tile);
             }
         }
     }
     
-    function openBuildPanel(x, y) {
-        if (!gameActive) return;
-        selectedTile = { x, y };
-        document.getElementById('buildPanel').classList.add('active');
-    }
+    function closeBuildPanel() { document.getElementById('buildPanel').classList.remove('active'); selectedTile = null; }
+    function selectBuilding(type) { if (selectedTile) { buildOnTile(selectedTile.x, selectedTile.y, type); closeBuildPanel(); } }
     
-    function closeBuildPanel() {
-        document.getElementById('buildPanel').classList.remove('active');
-        selectedTile = null;
-    }
-    
-    function selectBuilding(type) {
-        if (selectedTile) {
-            buildOnTile(selectedTile.x, selectedTile.y, type);
-            closeBuildPanel();
-        }
-    }
-    
-    // ==================== ИГРОВОЙ ЦИКЛ ====================
     let gameInterval;
-    
     function startGameLoop() {
         gameInterval = setInterval(() => {
             if (!gameActive) return;
-            
             if (!waveInProgress && preparationTime > 0) {
                 preparationTime--;
                 document.getElementById('timeLeft').innerText = preparationTime;
-                
-                if (preparationTime <= 0) {
-                    spawnGhosts();
-                }
+                if (preparationTime <= 0) spawnGhosts();
             }
-            
-            if (waveInProgress) {
-                processCombat();
-            }
-            
+            if (waveInProgress) processCombat();
             updateUI();
         }, 1000);
     }
     
-    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
     function initGame() {
-        dreams = 250;
-        currentWave = 1;
-        gameActive = true;
-        preparationTime = 30;
-        waveInProgress = false;
-        ghosts = [];
-        buildings = [];
-        totalKilled = 0;
+        dreams = 250; currentWave = 1; gameActive = true; preparationTime = 30; waveInProgress = false;
+        ghosts = []; buildings = []; totalKilled = 0;
         board = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(null));
-        
-        // Стартовые здания
-        buildOnTile(2, 2, 'bed');
-        buildOnTile(3, 3, 'turret');
-        buildOnTile(1, 4, 'door');
-        
-        renderBoard();
-        updateUI();
-        startGameLoop();
-        addLog('🎮 ИГРА НАЧАТА! Стройте оборону и выживайте!');
-        addLog('💡 СОВЕТ: Улучшайте турели и стройте усилители рядом!');
+        buildOnTile(2,2,'bed'); buildOnTile(3,3,'turret'); buildOnTile(1,4,'door');
+        renderBoard(); updateUI(); startGameLoop();
+        addLog('🎮 ИГРА НАЧАТА! Стройте оборону!');
     }
     
     initGame();
