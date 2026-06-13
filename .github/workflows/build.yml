@@ -1,0 +1,29 @@
+name: Build EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install Nativefier
+        run: npm install -g nativefier
+      
+      - name: Build EXE
+        run: nativefier --name "HauntedDorm" --platform windows --arch x64 --single-instance . .
+      
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: HauntedDorm-Game
+          path: ./HauntedDorm-win32-x64/
